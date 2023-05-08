@@ -2,6 +2,7 @@ package com.test.junit.scratch;
 
 import com.test.junit.scratch.annotation.ExpectToFail;
 import org.junit.*;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
@@ -93,5 +94,49 @@ public class AssertTest {
         assertThat(account.getName()).isNotEqualTo("plunderings");
         // null 체크는 굳이 많이 할 필요없도록 설계가 되어야하므로 너무 많은 것은 좋지 못하다.
         assertThat(account.getName()).isNotNull();
+    }
+
+    /**
+     * exception이 InsufficientFundsException 가 발생하게 되면 테스트는 통과한다.
+     * InsufficientFundsException 외의 오류가 발생하면 테스트는 통과하지 못한다.
+     */
+    @Test(expected = InsufficientFundsException.class)
+    public void throwWhenWithdrawingTooMuch() {
+        account.withdraw(100);
+    }
+
+    @Test
+    public void throwsWhenWithdrawingTooMuchTry() {
+        try {
+            account.withdraw(100);
+            fail();
+        }
+        catch (InsufficientFundsException expected) {
+            assertThat(expected.getMessage()).isEqualTo("balance only 0");
+        }
+    }
+
+    /**
+     * 예외를 원하는 예외로 발생시키는 것.
+     */
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void exceptionRule() {
+        thrown.expect(InsufficientFundsException.class);
+        thrown.expectMessage("balance only 0");
+        account.withdraw(100);
+    }
+
+    /**
+     * 예외적인 상황을 제외하고 예외가 발생하지 않는다.
+    */
+    @Test
+    public void readsFromTestFile() throws IOException {
+        String filename = "test.txt";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+        writer.write("test data");
+        writer.close();
     }
 }
