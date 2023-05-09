@@ -139,4 +139,15 @@ public class AssertTest {
         writer.write("test data");
         writer.close();
     }
+
+    /**
+     * @Ignore를 통해 해당 테스트를 제외할 수 있다.
+     * 설명 메시지는 선택사항이다.
+     * JUnit 테스트 러너는 제외된 테스트를 알려준다.
+     */
+    @Test
+    @Ignore("don't forget me! ")
+    public void somethingWeCannotHandleRightNow() {
+        // ...
+    }
 }
