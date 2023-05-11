@@ -1,10 +1,16 @@
 package com.test.junit.program;
 
+import com.test.junit.program.PercentileQuestion;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestExecutionListeners;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProfileTest {
@@ -78,5 +84,50 @@ class ProfileTest {
         criteria = new Criteria();
         criteria.add(new Criterion(new Answer(question, Bool.TRUE), Weight.DontCare));
         assertTrue(profile.matches(criteria));
+    }
+
+    int[] ids(Collection<Answer> answers) {
+        return answers.stream().mapToInt(a -> a.getQuestion().getId()).toArray();
+    }
+
+    @Test
+    public void findsAnswersBasedOnPredicate() {
+        profile.add(new Answer(new BooleanQuestion(1, "1"), Bool.FALSE));
+        profile.add(new Answer(new PercentileQuestion(2, "2", new String[]{}), 0));
+        profile.add(new Answer(new PercentileQuestion(3, "3", new String[]{}), 0));
+
+        List<Answer> answers = profile.find(a -> a.getQuestion().getClass() == PercentileQuestion.class);
+
+        assertThat(ids(answers)).isEqualTo(new int[] {2, 3});
+
+        List<Answer> answersComplement = profile.find(a -> a.getQuestion().getClass() != PercentileQuestion.class);
+
+        List<Answer> allAnswers = new ArrayList<>();
+        allAnswers.addAll(answersComplement);
+        allAnswers.addAll(answers);
+
+        assertThat(ids(allAnswers)).isEqualTo(new int[] {1,2,3});
+    }
+
+    @Test
+    public void findAnswers() {
+        int dataSize = 5000;
+        for (int i = 0; i < dataSize; i++) {
+            profile.add(new Answer(new BooleanQuestion(i, String.valueOf(i)), Bool.FALSE));
+        }
+        profile.add(new Answer(new PercentileQuestion(dataSize, String.valueOf(dataSize), new String[] {}), 0));
+        int numberOfTimes = 1000;
+        long elapsedMs = run(numberOfTimes, () -> profile.find(a -> a.getQuestion().getClass() == PercentileQuestion.class));
+
+        assertTrue(elapsedMs < 1000);
+    }
+
+    private long run(int times, Runnable func) {
+        long start = System.nanoTime();
+        for (int i = 0; i < times; i++) {
+            func.run();
+        }
+        long stop = System.nanoTime();
+        return (stop - start) / 1000000;
     }
 }

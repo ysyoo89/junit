@@ -1,7 +1,5 @@
 package com.test.junit.domain;
 
-
-
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +19,7 @@ public class PercentileQuestion extends Question {
         super(text);
         this.answerChoices = Arrays.asList(answerChoices);
     }
+
 
     public List<String> getAnswerChoices() {
         return answerChoices;

@@ -3,7 +3,10 @@ package com.test.junit.program;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 public class Profile {
@@ -45,5 +48,11 @@ public class Profile {
 
     public int score() {
         return score;
+    }
+
+    public List<Answer> find(Predicate<Answer> pred) {
+        return answers.values().stream()
+                .filter(pred)
+                .collect(Collectors.toList());
     }
 }
