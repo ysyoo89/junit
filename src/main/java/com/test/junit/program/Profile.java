@@ -23,25 +23,36 @@ public class Profile {
     }
 
     public boolean matches(Criteria criteria) {
-        score = 0;
+        calculateScore(criteria);
+        if (doesNotMeetAnyMustMatchCriterion(criteria)) {
+            return false;
+        }
+        return anyMatches(criteria);
+    }
 
-        boolean kill = false;
-        boolean anyMatches = false;
-        for (Criterion criterion: criteria) {
-            Answer answer = answers.get(criterion.getAnswer().getQuestionText());
-            boolean match = criterion.getWeight() == Weight.DontCare || answer.match(criterion.getAnswer());
-
+    private boolean doesNotMeetAnyMustMatchCriterion(Criteria criteria) {
+        for (Criterion criterion : criteria) {
+            boolean match = criterion.matches(answerMatching(criterion));
             if (!match && criterion.getWeight() == Weight.MustMatch) {
-                kill = true;
+                return true;
             }
+        }
+        return false;
+    }
 
-            if (match) {
+    private void calculateScore(Criteria criteria) {
+        score = 0;
+        for(Criterion criterion : criteria) {
+            if (criterion.matches(answerMatching(criterion))) {
                 score += criterion.getWeight().getValue();
             }
-            anyMatches |= match;
         }
-        if (kill) {
-            return false;
+    }
+
+    private boolean anyMatches(Criteria criteria) {
+        boolean anyMatches = false;
+        for (Criterion criterion : criteria) {
+            anyMatches |= criterion.matches(answerMatching(criterion));
         }
         return anyMatches;
     }
@@ -54,5 +65,13 @@ public class Profile {
         return answers.values().stream()
                 .filter(pred)
                 .collect(Collectors.toList());
+    }
+
+    private boolean matches(Criterion criterion, Answer answer) {
+        return criterion.getWeight() == Weight.DontCare || answer.match(criterion.getAnswer());
+    }
+
+    private Answer answerMatching(Criterion criterion) {
+        return answers.get(criterion.getAnswer().getQuestionText());
     }
 }
