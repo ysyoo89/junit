@@ -79,7 +79,7 @@ class ProfileTest {
         */
         profile.add(new Answer(question, Bool.FALSE));
         criteria.add(new Criterion(new Answer(question, Bool.TRUE), Weight.MustMatch));
-        boolean matches = profile.matches(criteria);
+        boolean matches = profile.getMatchSet(criteria).matches();
         assertFalse(matches);
 
     }
@@ -100,7 +100,7 @@ class ProfileTest {
          */
         profile.add(new Answer(question, Bool.FALSE));
         criteria.add(new Criterion(new Answer(question, Bool.TRUE), Weight.DontCare));
-        boolean matches = profile.matches(criteria);
+        boolean matches = profile.getMatchSet(criteria).matches();
         assertFalse(matches);
     }
 
@@ -113,13 +113,13 @@ class ProfileTest {
         profile.add(new Answer(question, Bool.FALSE));
         Criteria criteria = new Criteria();
         criteria.add(new Criterion(new Answer(question, Bool.TRUE), Weight.MustMatch));
-        assertFalse(profile.matches(criteria));
+        assertFalse(profile.getMatchSet(criteria).matches());
 
         // don't care 항목에 대해서는 true
         profile.add(new Answer(question, Bool.FALSE));
         criteria = new Criteria();
         criteria.add(new Criterion(new Answer(question, Bool.TRUE), Weight.DontCare));
-        assertTrue(profile.matches(criteria));
+        assertTrue(profile.getMatchSet(criteria).matches());
     }
 
     int[] ids(Collection<Answer> answers) {
@@ -173,7 +173,7 @@ class ProfileTest {
         profile.add(answerDoesNotReimburseTuition);
         criteria.add(new Criterion(answerThereIsRelocation, Weight.Important));
         criteria.add(new Criterion(answerReimbursesTuition, Weight.Important));
-        boolean matches = profile.matches(criteria);
+        boolean matches = profile.getMatchSet(criteria).matches();
         assertTrue(matches);
     }
 }
