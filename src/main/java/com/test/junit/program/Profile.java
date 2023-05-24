@@ -2,6 +2,12 @@ package com.test.junit.program;
 
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 @Getter
 public class Profile {
     private AnswerCollection answers = new AnswerCollection();
@@ -23,6 +29,5 @@ public class Profile {
     public String toString() {
         return name;
     }
-
 
 }
