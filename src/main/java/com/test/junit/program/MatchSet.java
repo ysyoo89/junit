@@ -10,6 +10,8 @@ public class MatchSet {
     private int score = 0;
     private Criteria criteria;
 
+    private String profileId;
+
     public MatchSet(AnswerCollection answers, Criteria criteria) {
         this.answers = answers;
         this.criteria = criteria;

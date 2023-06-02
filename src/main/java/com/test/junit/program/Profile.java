@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class Profile {
     private AnswerCollection answers = new AnswerCollection();
     private String name;
+    private String id;
 
     public Profile(String name) {
         this.name = name;
