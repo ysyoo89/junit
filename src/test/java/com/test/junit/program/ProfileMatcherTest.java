@@ -1,11 +1,11 @@
 package com.test.junit.program;
 
+import com.test.junit.util.Match;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,6 +88,29 @@ public class ProfileMatcherTest {
         matcher.process(listener, set);
 
         verify(listener, never()).foundMatch(nonMatchingProfile, set);
+    }
+
+    @Test
+    public void gathersMatchingProfiles() {
+        Set<String> processedSets = Collections.synchronizedSet(new HashSet<>());
+        BiConsumer<MatchListener, MatchSet> processFunction = (listener, set) -> {
+            processedSets.add(set.getProfileId());
+        };
+        List<MatchSet> matchSets = createMatchSet(100);
+
+        matcher.findMatchingProfiles(criteria, listener, matchSets, processFunction);
+
+        while(!matcher.getExecutor().isTerminated());
+
+        assertThat(processedSets).isEqualTo(matchSets.stream().map(MatchSet::getProfileId).collect(Collectors.toList()));
+    }
+
+    private List<MatchSet> createMatchSet(int count) {
+        List<MatchSet> sets = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            sets.add(new MatchSet(String.valueOf(i), null, null));
+        }
+        return sets;
     }
 
 

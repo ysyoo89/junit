@@ -12,6 +12,12 @@ public class MatchSet {
 
     private String profileId;
 
+    public MatchSet(String id, AnswerCollection answers, Criteria criteria) {
+        this.profileId = id;
+        this.answers = answers;
+        this.criteria = criteria;
+        calculateScore();
+    }
     public MatchSet(AnswerCollection answers, Criteria criteria) {
         this.answers = answers;
         this.criteria = criteria;
