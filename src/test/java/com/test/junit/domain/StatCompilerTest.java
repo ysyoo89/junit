@@ -45,6 +45,7 @@ public class StatCompilerTest {
 
     @Test
     public void responsesByQuestionAnswersCountsByQuestionText() {
+        // mock을 사용하기 전
         StatCompiler stats = new StatCompiler();
         List<BooleanAnswer> answers = new ArrayList<>();
         answers.add(new BooleanAnswer(1, true));
